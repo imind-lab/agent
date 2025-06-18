@@ -65,6 +65,15 @@ class BaseConfig(BaseModel):
         return Output(**params)
 
 
-class Agent(BaseConfig):
+class AgentConfig(BaseConfig):
     type: str = ""
     structure: bool = Field(default=False)
+
+
+class Node(BaseModel):
+    pass
+
+
+class Config(BaseConfig):
+    agent: AgentConfig
+    nodes: List[Node]
