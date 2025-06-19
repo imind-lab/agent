@@ -1,5 +1,5 @@
 [project]
-name = "imind-agent-workflow"
+name = "imind-agent"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -13,3 +13,7 @@ imind-agent = "imind_agent:main"
 [build-system]
 requires = ["uv_build>=0.7.13,<0.8"]
 build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "imind_ai"
+module-root = ""

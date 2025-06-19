@@ -2,7 +2,7 @@ from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
 from uuid import uuid4
 
-from imind_agent.config.schema import Input, Output
+from imind_ai.config.schema import Input, Output
 
 from .helper import Env, AgentInput, AgentOutput, process_depends, process_params
 

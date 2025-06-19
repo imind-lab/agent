@@ -3,7 +3,7 @@ from _collections_abc import dict_items, dict_keys, dict_values
 from typing import Any, Dict, Literal, Optional, Union
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, model_serializer
 
-from imind_agent.config.value_type import ValueType
+from imind_ai.config.value_type import ValueType
 
 
 class IO(BaseModel):
