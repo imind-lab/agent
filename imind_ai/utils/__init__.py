@@ -1,3 +1,8 @@
+from pathlib import Path
+from typing import Dict
+import yaml
+
+
 def json_to_markdown(data, indent_level=0):
     indent = "    " * indent_level  # 当前缩进
 
@@ -26,3 +31,11 @@ def json_to_markdown(data, indent_level=0):
                 lines.append(f"{header} {value}")
 
         return "\n".join(lines)
+
+
+def read_yaml(file_path: Path, encoding: str = "utf-8") -> Dict:
+    """Read yaml file and return a dict"""
+    if not file_path.exists():
+        return {}
+    with open(file_path, "r", encoding=encoding) as file:
+        return yaml.safe_load(file)

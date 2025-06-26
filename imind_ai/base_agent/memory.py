@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 from langchain_core.runnables import RunnableConfig
 from langgraph.config import get_config, get_store
 
-from imind_ai.utils.markdown import json_to_markdown
+from imind_ai.utils import json_to_markdown
 
 
 class MemoryType(Enum):

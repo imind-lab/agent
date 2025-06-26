@@ -1,0 +1,14 @@
+input:
+  content:
+    description: "宽度"
+    type: int
+    default: 0
+output:
+  content:
+    type: str
+
+env:
+  base_url:
+    description: "大模型地址"
+    type: "str"
+    default: http://127.0.0.1:11434
