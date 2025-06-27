@@ -5,10 +5,23 @@ input:
     default: 0
 output:
   content:
+    description: "宽度"
     type: str
 
 env:
+  model:
+    description: "大模型信息"
+    type: "str"
+    default: ollama:qwen2.5:14b
   base_url:
     description: "大模型地址"
     type: "str"
     default: http://127.0.0.1:11434
+  postgres_dsn:
+    description: "postgres sdn"
+    type: "str"
+    default: ""
+  multi_turn:
+    description: "对话模式：是否为多轮对话"
+    type: "bool"
+    default: true

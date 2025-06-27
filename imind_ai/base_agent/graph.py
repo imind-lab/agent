@@ -19,6 +19,7 @@ from langgraph.types import Checkpointer
 from langgraph.store.base import BaseStore
 from langgraph.prebuilt import ToolNode
 from langmem.short_term import SummarizationNode
+from pydantic_settings import BaseSettings
 
 
 class State(MessagesState):
@@ -29,6 +30,8 @@ class State(MessagesState):
 
 def create_base_agent(
     llm: Union[BaseChatModel, _ConfigurableModel],
+    *,
+    settings: BaseSettings,
     tools: Optional[Sequence[Union[BaseTool, Callable]]] = None,
     output_schema: Optional[Type[BaseModel]] = None,
     system_prompt: Optional[str] = None,
