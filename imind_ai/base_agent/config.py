@@ -27,9 +27,7 @@ class Config(BaseModel):
     @classmethod
     def from_file(cls, path: Path | None = None) -> "Config":
         path = path or Path(os.path.join(os.path.dirname(__file__), "agent.yaml"))
-        print("path", path)
         cfg = read_yaml(path)
-        print("cfg", cfg)
         return Config(**cfg)
 
     @classmethod

@@ -53,15 +53,16 @@ class BaseAgent:
 
         self.settings = settings
 
-        self.pg_checkpointer = False
         if settings.multi_turn:
             if settings.postgres_dsn:
                 checkpointer = None
-                self.pg_checkpointer = True
+                self.checkpointer_initialized = False
             else:
                 checkpointer = InMemorySaver()
+                self.checkpointer_initialized = True
         else:
             checkpointer = None
+            self.checkpointer_initialized = True
         llm = init_chat_model(settings.model, base_url=settings.base_url)
         self.agent = create_base_agent(
             llm,
@@ -74,6 +75,7 @@ class BaseAgent:
         )
 
         self.output_schema = output_schema
+        self.pg_pool = None
 
     @classmethod
     def get_env_schema(cls) -> Dict[str, Any]:
@@ -95,52 +97,53 @@ class BaseAgent:
         self.prompt_template = template
 
     async def achat(self, user_input: Input, ctx: BaseContext = None) -> Dict | str:
-        if self.agent is None:
-            raise RuntimeError("The agent was not initialized correctly.")
+        inputs, config = await self.pre_process(user_input, ctx)
 
-        ctx = ctx or BaseContext()
-        ctx.session_id = ctx.session_id or str(uuid4())
-
-        thread_id = f"{ctx.session_id}-{self.id}"
-        configurable = {"thread_id": thread_id}
-        if ctx.user_id:
-            configurable["user_id"] = ctx.user_id
-
-        config = {"configurable": configurable}
-
-        self.agent.store = ctx.store
-
-        inputs = {"user_input": self.prompt_template.format(**user_input.dict())}
-
-        if self.pg_checkpointer:
-            connection_kwargs = {
-                "autocommit": True,
-                "prepare_threshold": 0,
-            }
-
-            dsn = f"postgresql://{self.settings.postgres_dsn}"
-
-            async with AsyncConnectionPool(
-                conninfo=dsn,
-                max_size=20,
-                kwargs=connection_kwargs,
-            ) as pool:
-                checkpointer = AsyncPostgresSaver(pool)
-                await checkpointer.setup()
-
-                self.agent.checkpointer = checkpointer
-
-                response = await self.agent.ainvoke(inputs, config=config)
-        else:
-            response = await self.agent.ainvoke(inputs, config=config)
-
+        response = await self.agent.ainvoke(inputs, config=config)
         return response.get("llm_output")
 
     async def achat_stream(
         self, user_input: Input, ctx: BaseContext = None
     ) -> AsyncGenerator[str, None]:
+        inputs, config = await self.pre_process(user_input, ctx)
+
+        async for message_chunk, metadata in self.agent.astream(
+            inputs, config=config, stream_mode="messages"
+        ):
+            if (
+                metadata["langgraph_node"] == "llm_caller"
+                and isinstance(message_chunk, AIMessageChunk)
+                and len(message_chunk.tool_calls) == 0
+                and message_chunk.content
+            ):
+                yield message_chunk.content
+
+    async def pre_process(
+        self, user_input: Input, ctx: BaseContext = None
+    ) -> Tuple[Dict, Dict]:
         if self.agent is None:
             raise RuntimeError("The agent was not initialized correctly.")
+
+        if not self.checkpointer_initialized:
+            connection_kwargs = {
+                "autocommit": True,
+                "prepare_threshold": 0,
+            }
+
+            dsn = f"postgresql://{self.settings.postgres_dsn}"
+
+            self.pg_pool = await AsyncConnectionPool(
+                conninfo=dsn,
+                max_size=20,
+                kwargs=connection_kwargs,
+            ).__aenter__()
+
+            checkpointer = AsyncPostgresSaver(self.pg_pool)
+            await checkpointer.setup()
+
+            self.agent.checkpointer = checkpointer
+
+            self.checkpointer_initialized = True
 
         ctx = ctx or BaseContext()
         ctx.session_id = ctx.session_id or str(uuid4())
@@ -155,43 +158,11 @@ class BaseAgent:
         self.agent.store = ctx.store
 
         inputs = {"user_input": self.prompt_template.format(**user_input.dict())}
+        return inputs, config
 
-        if self.pg_checkpointer:
-            connection_kwargs = {
-                "autocommit": True,
-                "prepare_threshold": 0,
-            }
-
-            dsn = f"postgresql://{self.settings.postgres_dsn}"
-
-            async with AsyncConnectionPool(
-                conninfo=dsn,
-                max_size=20,
-                kwargs=connection_kwargs,
-            ) as pool:
-                checkpointer = AsyncPostgresSaver(pool)
-                await checkpointer.setup()
-
-                self.agent.checkpointer = checkpointer
-
-            async for message_chunk, metadata in self.agent.astream(
-                inputs, config=config, stream_mode="messages"
-            ):
-                if (
-                    metadata["langgraph_node"] == "llm_caller"
-                    and isinstance(message_chunk, AIMessageChunk)
-                    and len(message_chunk.tool_calls) == 0
-                    and message_chunk.content
-                ):
-                    yield message_chunk.content
-        else:
-            async for message_chunk, metadata in self.agent.astream(
-                inputs, config=config, stream_mode="messages"
-            ):
-                if (
-                    metadata["langgraph_node"] == "llm_caller"
-                    and isinstance(message_chunk, AIMessageChunk)
-                    and len(message_chunk.tool_calls) == 0
-                    and message_chunk.content
-                ):
-                    yield message_chunk.content
+    async def clone(self):
+        try:
+            if self.pg_pool:
+                await self.pg_pool.__aexit__(None, None, None)
+        except Exception as e:
+            print(f"关闭连接时发生错误: {str(e)}")

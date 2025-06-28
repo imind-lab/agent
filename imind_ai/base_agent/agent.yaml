@@ -1,11 +1,11 @@
 input:
   content:
-    description: "宽度"
+    description: "the content of input"
     type: int
     default: 0
 output:
   content:
-    description: "宽度"
+    description: "the content of output"
     type: str
 
 env:
@@ -20,7 +20,7 @@ env:
   postgres_dsn:
     description: "postgres sdn"
     type: "str"
-    default: ""
+    default: "postgres:123456@127.0.0.1:5432/imind"
   multi_turn:
     description: "对话模式：是否为多轮对话"
     type: "bool"

@@ -10,7 +10,7 @@ from typing import (
 
 from pydantic import BaseModel
 
-from langchain_core.messages import AnyMessage, HumanMessage
+from langchain_core.messages import AnyMessage, HumanMessage, SystemMessage
 from langgraph.graph import StateGraph, START, MessagesState, END
 from langgraph.graph.graph import CompiledGraph
 from langchain.chat_models.base import BaseChatModel, _ConfigurableModel
@@ -94,12 +94,26 @@ def create_base_agent(
 
         summarized_messages.extend(list(new_messages))
 
+        if system_prompt:
+            first_message = summarized_messages[0]
+            other_messages = summarized_messages[1:]
+
+            if isinstance(first_message, SystemMessage):
+                content = f"{system_prompt}\n\n{first_message.content}"
+                system_message = SystemMessage(content=content)
+                processed_messages = [system_message] + other_messages
+            else:
+                system_message = SystemMessage(content=system_prompt)
+                processed_messages = [system_message, first_message] + other_messages
+        else:
+            processed_messages = summarized_messages
+
         if tools:
             response = llm.bind_tools(tools, tool_choice="any").invoke(
-                summarized_messages
+                processed_messages
             )
         else:
-            response = llm.invoke(summarized_messages)
+            response = llm.invoke(processed_messages)
 
         return {"messages": [response], "summarized_messages": summarized_messages}
 
