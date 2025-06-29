@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Set, Union
 
-from imind_ai.config.schema import AgentInput, AgentOutput
+from imind_ai.agent.config.schema import AgentInput, AgentOutput
 
 
 def process_depends(config: Dict) -> List[str]:

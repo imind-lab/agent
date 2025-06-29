@@ -11,10 +11,10 @@ from langchain_core.messages import AIMessageChunk
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 
-from imind_ai.base_agent.config import Config
-from imind_ai.base_agent.graph import create_base_agent
-from imind_ai.base_agent.prompt import DEFAULT_PROMPT_TEMPLATE
-from imind_ai.config.schema import Input
+from imind_ai.agent.base.config import Config
+from imind_ai.agent.base.graph import create_base_agent
+from imind_ai.agent.base.prompt import DEFAULT_PROMPT_TEMPLATE
+from imind_ai.agent.config.schema import Input
 from imind_ai.utils.context import BaseContext
 from imind_ai.utils.settings import build_settings_from_schema, update_schema
 
