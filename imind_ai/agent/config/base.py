@@ -1,8 +1,10 @@
-from typing import List, Optional, Dict, Any
+from pathlib import Path
+from typing import List, Literal, Optional, Dict, Any, Union
 from pydantic import BaseModel, Field
 from uuid import uuid4
 
 from imind_ai.agent.config.schema import Input, Output
+from imind_ai.utils import read_yaml
 
 from .helper import Env, AgentInput, AgentOutput, process_depends, process_params
 
@@ -13,7 +15,7 @@ class BaseConfig(BaseModel):
     description: Optional[str] = None
     env: Optional[Dict[str, Env]] = None
     input: Dict[str, AgentInput] = {}
-    output: Dict[str, AgentOutput] = {}
+    output: Union[str, Dict[str, AgentOutput]] = ""
 
     def get_env_schema(self) -> Dict[str, Any]:
         schema: Dict[str, Any] = {}
@@ -66,14 +68,25 @@ class BaseConfig(BaseModel):
 
 
 class AgentConfig(BaseConfig):
-    type: str = ""
-    structure: bool = Field(default=False)
-
-
-class Node(BaseModel):
     pass
+
+
+class BaseNode(BaseConfig):
+    type: Literal["rag", "llm", "condition"] = Field(default="llm")
+
+    next: Union[str, List[str]]
 
 
 class Config(BaseConfig):
     agent: AgentConfig
-    nodes: List[Node]
+    nodes: List[BaseNode]
+
+    @classmethod
+    def from_file(cls, path: Path | None = None) -> "Config":
+        path = path or Path("config.yaml")
+        cfg = read_yaml(path)
+        return Config(**cfg)
+
+    @classmethod
+    def from_dict(cls, data: Dict):
+        return Config(**data)

@@ -7,6 +7,7 @@ authors = [{ name = "songli", email = "18601038090@163.com" }]
 requires-python = ">=3.13"
 dependencies = [
     "langchain>=0.3.26",
+    "langchain-mcp-adapters>=0.1.7",
     "langchain-ollama>=0.3.3",
     "langgraph>=0.4.8",
     "langgraph-checkpoint-postgres>=2.0.21",
