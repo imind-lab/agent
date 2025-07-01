@@ -3,13 +3,15 @@ from typing import List, Literal, Optional, Dict, Any, Union
 from pydantic import BaseModel, Field
 from uuid import uuid4
 
+from sqlalchemy import literal
+
 from imind_ai.agent.config.schema import Input, Output
 from imind_ai.utils import read_yaml
 
 from .helper import Env, AgentInput, AgentOutput, process_depends, process_params
 
 
-class BaseConfig(BaseModel):
+class AgentConfig(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
     name: str = Field(default="")
     description: Optional[str] = None
@@ -67,17 +69,13 @@ class BaseConfig(BaseModel):
         return Output(**params)
 
 
-class AgentConfig(BaseConfig):
-    pass
-
-
-class BaseNode(BaseConfig):
+class BaseNode(BaseModel):
     type: Literal["rag", "llm", "condition"] = Field(default="llm")
 
     next: Union[str, List[str]]
 
 
-class Config(BaseConfig):
+class Config(BaseModel):
     agent: AgentConfig
     nodes: List[BaseNode]
 
@@ -90,3 +88,27 @@ class Config(BaseConfig):
     @classmethod
     def from_dict(cls, data: Dict):
         return Config(**data)
+
+
+class ConditionInfo(BaseModel):
+    operator: Literal[
+        "eq", "ne", "lt", "gt", "ge", "le", "ct", "nc", "sw", "ew", "em", "nem"
+    ]
+    operand: str
+    op_type: str
+    source: Literal["input", "reference"]
+    value: Optional[str] = None
+    reference: Optional[str] = None
+
+
+class Condition(BaseModel):
+    logic_operator: Literal["AND", "OR"]
+    conditions: List[ConditionInfo]
+    next: Union[str, List[str]]
+
+
+class ConditionNode(BaseNode):
+    prev: str
+    if_express: Condition = Field(alias="if")
+    elif_express: Optional[List[Condition]] = Field(default=None, alias="elif")
+    else_express: Optional[str] = Field(default=None, alias="else")

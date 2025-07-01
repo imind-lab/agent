@@ -4,7 +4,7 @@ from typing import Dict
 
 
 from imind_ai.agent.config.base import Config
-from imind_ai.agent.workflow.flow.context import Context, Phase
+from imind_ai.agent.workflow.pipeline.context import Context, Phase
 from imind_ai.utils.settings import build_settings_from_schema, update_schema
 
 
