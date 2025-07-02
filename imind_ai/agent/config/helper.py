@@ -49,28 +49,18 @@ def process_reference(ref: str, **kwargs) -> Any:
     引用对象不存在时抛出异常
     """
     infos = ref.split(".")
-    length = len(infos)
-    if length < 2 or infos[0] not in kwargs:
+    entity = infos.pop(0)
+    if entity not in kwargs:
         raise ValueError(f"引用的值不正确，请核实{ref}, {str(kwargs)}")
 
-    obj = kwargs[infos[0]]
-    for index, info in enumerate(infos):
-        if index == 0:
-            continue
-        elif index == length - 1:
-            if hasattr(obj, info):
-                return getattr(obj, info)
-            elif isinstance(obj, dict) and info in obj:
-                return obj[info]
-            else:
-                raise ValueError(f"引用的值不正确，请核实{ref}")
+    item = kwargs[entity]
+
+    while len(infos) > 1:
+        key = infos.pop(0)
+        if hasattr(item, key):
+            item = getattr(item, key)
         else:
-            if hasattr(obj, info):
-                obj = getattr(obj, info)
-            elif info in obj:
-                obj = obj[info]
-            else:
-                raise ValueError(f"引用的值不正确，请核实{ref}")
+            raise ValueError(f"引用的值不正确，请核实{ref}")
 
 
 def case_value(

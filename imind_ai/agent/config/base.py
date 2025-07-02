@@ -128,4 +128,4 @@ class ConditionNodeConfig(BaseNodeConfig):
     prev: str
     if_express: Condition = Field(alias="if")
     elif_express: Optional[List[Condition]] = Field(default=None, alias="elif")
-    else_express: Optional[str] = Field(default=None, alias="else")
+    else_express: Optional[Union[str, List[str]]] = Field(default=None, alias="else")
