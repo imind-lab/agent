@@ -8,56 +8,12 @@ from pydantic_settings import (
     YamlConfigSettingsSource,
 )
 
-type_mapping = {
-    "none": None,
-    "Any": Any,
-    "int": int,
-    "str": str,
-    "float": float,
-    "list": list,
-    "dict": dict,
-    "bool": bool,
-    "object": object,
-    "list[str]": list[str],
-    "list[int]": list[int],
-    "list[bool]": list[bool],
-    "list[float]": list[float],
-    "list[object]": list[object],
-    "list[dict]": list[dict],
-}
+from imind_ai.utils import create_dynamic_model
 
 
 def build_settings_from_schema(schema: Dict[str, Any]) -> Type[BaseSettings]:
-    schema_dict = {}
-    for key, value in schema.items():
-        if isinstance(value, BaseModel):
-            alias = value.alias
-            description = value.description
-            if value.default is not None:
-                schema_dict[key] = (
-                    type_mapping[value.type],
-                    Field(description=description, default=value.default, alias=alias),
-                )
-            else:
-                schema_dict[key] = (
-                    type_mapping[value.type] | None,
-                    Field(description=description, default=None, alias=alias),
-                )
-        else:
-            alias = value.get("alias", None)
-            description = value.get("description", None)
-            if "value" in value and value["value"] is not None:
-                schema_dict[key] = (
-                    type_mapping[value["value_type"]],
-                    Field(description=description, default=value["value"], alias=alias),
-                )
-            else:
-                schema_dict[key] = (
-                    type_mapping[value["value_type"]] | None,
-                    Field(description=description, default=None, alias=alias),
-                )
 
-    DynamicModel: Type[BaseModel] = create_model("DynamicModel", **schema_dict)
+    DynamicModel: Type[BaseModel] = create_dynamic_model(schema)
 
     class Settings(BaseSettings, DynamicModel):
         model_config = SettingsConfigDict(

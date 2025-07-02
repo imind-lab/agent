@@ -69,15 +69,19 @@ class AgentConfig(BaseModel):
         return Output(**params)
 
 
-class BaseNode(BaseModel):
-    type: Literal["rag", "llm", "condition"] = Field(default="llm")
+class BaseNodeConfig(BaseModel):
+    pass
+
+
+class NodeConfig(BaseNodeConfig):
+    type: Literal["rag", "sdk", "base_agent", "condition"] = Field(default="base_agent")
 
     next: Union[str, List[str]]
 
 
 class Config(BaseModel):
     agent: AgentConfig
-    nodes: List[BaseNode]
+    nodes: List[BaseNodeConfig]
 
     @classmethod
     def from_file(cls, path: Path | None = None) -> "Config":
@@ -90,7 +94,20 @@ class Config(BaseModel):
         return Config(**data)
 
 
-class ConditionInfo(BaseModel):
+class BaseModelSchema(BaseModel):
+    type: str
+    description: Optional[str] = None
+    alias: Optional[str] = None
+    default: Optional[Any] = None
+
+
+class BaseAgentNodeConfig(NodeConfig, AgentConfig):
+    system_prompt: Optional[str] = None
+    output_schema: Optional[Dict[str, BaseModelSchema]] = None
+    debug: bool = False
+
+
+class ConditionItem(BaseModel):
     operator: Literal[
         "eq", "ne", "lt", "gt", "ge", "le", "ct", "nc", "sw", "ew", "em", "nem"
     ]
@@ -103,11 +120,11 @@ class ConditionInfo(BaseModel):
 
 class Condition(BaseModel):
     logic_operator: Literal["AND", "OR"]
-    conditions: List[ConditionInfo]
+    condition: List[ConditionItem]
     next: Union[str, List[str]]
 
 
-class ConditionNode(BaseNode):
+class ConditionNodeConfig(BaseNodeConfig):
     prev: str
     if_express: Condition = Field(alias="if")
     elif_express: Optional[List[Condition]] = Field(default=None, alias="elif")
