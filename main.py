@@ -1,43 +1,50 @@
-import asyncio
+# import asyncio
 
-from pydantic import BaseModel, Field
-from imind_ai.agent.base.agent import BaseAgent
-from imind_ai.agent.config.schema import Input
-from langchain_mcp_adapters.client import MultiServerMCPClient
-
-
-class WeatherResponse(BaseModel):
-    """Respond to the user with this"""
-
-    temperature: float = Field(description="The temperature in fahrenheit")
-    wind_directon: str = Field(
-        description="The direction of the wind in abbreviated form"
-    )
-    wind_speed: float = Field(description="The speed of the wind in km/h")
+# from pydantic import BaseModel, Field
+# from imind_ai.agent.base.agent import BaseAgent
+# from imind_ai.agent.config.schema import Input
+# from langchain_mcp_adapters.client import MultiServerMCPClient
 
 
-client = MultiServerMCPClient(
-    {
-        "weather": {
-            "url": "http://localhost:8888/echo/mcp/",
-            "transport": "streamable_http",
-        }
-    }
-)
+# class WeatherResponse(BaseModel):
+#     """Respond to the user with this"""
+
+#     temperature: float = Field(description="The temperature in fahrenheit")
+#     wind_directon: str = Field(
+#         description="The direction of the wind in abbreviated form"
+#     )
+#     wind_speed: float = Field(description="The speed of the wind in km/h")
 
 
-async def main():
-    tools = await client.get_tools()
-    agent = BaseAgent(
-        name="koofox",
-        system_prompt="You are a helpful assistant",
-        output_schema=WeatherResponse,
-        tools=tools,
-    )
-    user_input = Input(content="what's the weather in SF?")
-    resp = await agent.achat(user_input)
-    print("resp", resp)
+# client = MultiServerMCPClient(
+#     {
+#         "weather": {
+#             "url": "http://localhost:8888/echo/mcp/",
+#             "transport": "streamable_http",
+#         }
+#     }
+# )
 
 
-if __name__ == "__main__":
-    asyncio.run(main())
+# async def main():
+#     tools = await client.get_tools()
+#     agent = BaseAgent(
+#         name="koofox",
+#         system_prompt="You are a helpful assistant",
+#         output_schema=WeatherResponse,
+#         tools=tools,
+#     )
+#     user_input = Input(content="what's the weather in SF?")
+#     resp = await agent.achat(user_input)
+#     print("resp", resp)
+
+
+# if __name__ == "__main__":
+#     asyncio.run(main())
+
+from pathlib import Path
+from imind_ai.agent.config.base import Config
+
+
+config = Config.from_file(Path("./workflow.yaml"))
+print(config.nodes)

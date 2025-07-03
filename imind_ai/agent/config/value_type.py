@@ -8,13 +8,11 @@ class ValueType(str, Enum):
     BOOL = "bool"
     FLOAT = "float"
     DICT = "dict"
-    OBJECT = "object"
     LIST_INT = "list[int]"
     LIST_STR = "list[str]"
     LIST_BOOL = "list[bool]"
     LIST_FLOAT = "list[float]"
     LIST_DICT = "list[dict]"
-    LIST_OBJECT = "list[object]"
 
     @classmethod
     def map(cls) -> dict:
@@ -25,13 +23,11 @@ class ValueType(str, Enum):
             cls.BOOL: bool,
             cls.FLOAT: float,
             cls.DICT: dict,
-            cls.OBJECT: object,
             cls.LIST_INT: list[int],
             cls.LIST_STR: list[str],
             cls.LIST_BOOL: list[bool],
             cls.LIST_FLOAT: list[float],
             cls.LIST_DICT: list[dict],
-            cls.LIST_OBJECT: list[object],
         }
 
     def is_list(self) -> bool:
@@ -52,7 +48,5 @@ class ValueType(str, Enum):
             return 0.0
         elif self == self.DICT:
             return {}
-        elif self == self.OBJECT:
-            return object()
         else:
             return None

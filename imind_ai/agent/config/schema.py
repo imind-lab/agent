@@ -1,5 +1,6 @@
 from _collections_abc import dict_items, dict_keys, dict_values
 
+from email.policy import default
 from typing import Any, Dict, Literal, Optional, Union
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, model_serializer
 
@@ -102,18 +103,18 @@ class Env(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
 
     description: str = Field(default="")
-    value_type: ValueType = Field(default="str")
-    value: Union[str, int, bool, float, list, dict, object, None] = None
+    type: ValueType = Field(default="str")
+    default: Union[str, int, bool, float, list, dict, None] = None
     alias: Optional[str] = None
 
 
 class AgentInput(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
 
-    required: Optional[bool] = Field(default=None)
+    required: Optional[bool] = Field(default=False)
     description: str = Field(default="")
-    value_type: ValueType = Field(default="str")
-    value: Union[str, int, bool, float, list, dict, object, None] = None
+    type: ValueType = Field(default="str")
+    default: Union[str, int, bool, float, list, dict, None] = None
     source: Optional[Literal["input", "reference"]] = None
     reference: Optional[str] = None
 
@@ -122,8 +123,8 @@ class AgentOutput(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
 
     description: Optional[str] = Field(default="")
-    value_type: ValueType = Field(default="str")
+    type: ValueType = Field(default="str")
+    default: Optional[Union[str, int, bool, float, list, dict]] = None
     value_schema: Optional[dict[str, "AgentOutput"]] = None
-    value: Optional[Union[str, int, bool, float, list, dict, object]] = None
     source: Optional[Literal["input", "reference"]] = None
     reference: Optional[str] = None

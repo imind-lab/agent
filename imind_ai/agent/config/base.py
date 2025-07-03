@@ -3,12 +3,10 @@ from typing import List, Literal, Optional, Dict, Any, Union
 from pydantic import BaseModel, Field
 from uuid import uuid4
 
-from sqlalchemy import literal
-
-from imind_ai.agent.config.schema import Input, Output
+from imind_ai.agent.config.schema import Input, Output, Env
 from imind_ai.utils import read_yaml
 
-from .helper import Env, AgentInput, AgentOutput, process_depends, process_params
+from .helper import AgentInput, AgentOutput, process_depends, process_params
 
 
 class AgentConfig(BaseModel):
@@ -70,28 +68,14 @@ class AgentConfig(BaseModel):
 
 
 class BaseNodeConfig(BaseModel):
-    pass
+    id: str = Field(default_factory=lambda: str(uuid4()))
+    name: str = Field(default="")
+    type: Literal["rag", "sdk", "base_agent", "condition"] = Field(default="base_agent")
 
 
 class NodeConfig(BaseNodeConfig):
-    type: Literal["rag", "sdk", "base_agent", "condition"] = Field(default="base_agent")
 
     next: Union[str, List[str]]
-
-
-class Config(BaseModel):
-    agent: AgentConfig
-    nodes: List[BaseNodeConfig]
-
-    @classmethod
-    def from_file(cls, path: Path | None = None) -> "Config":
-        path = path or Path("config.yaml")
-        cfg = read_yaml(path)
-        return Config(**cfg)
-
-    @classmethod
-    def from_dict(cls, data: Dict):
-        return Config(**data)
 
 
 class BaseModelSchema(BaseModel):
@@ -114,12 +98,12 @@ class ConditionItem(BaseModel):
     operand: str
     op_type: str
     source: Literal["input", "reference"]
-    value: Optional[str] = None
+    value: Optional[Any] = None
     reference: Optional[str] = None
 
 
 class Condition(BaseModel):
-    logic_operator: Literal["AND", "OR"]
+    logic_operator: Literal["and", "or"]
     condition: List[ConditionItem]
     next: Union[str, List[str]]
 
@@ -129,3 +113,18 @@ class ConditionNodeConfig(BaseNodeConfig):
     if_express: Condition = Field(alias="if")
     elif_express: Optional[List[Condition]] = Field(default=None, alias="elif")
     else_express: Optional[Union[str, List[str]]] = Field(default=None, alias="else")
+
+
+class Config(BaseModel):
+    agent: AgentConfig
+    nodes: List[Union[NodeConfig, ConditionNodeConfig]]
+
+    @classmethod
+    def from_file(cls, path: Path | None = None) -> "Config":
+        path = path or Path("config.yaml")
+        cfg = read_yaml(path)
+        return Config(**cfg)
+
+    @classmethod
+    def from_dict(cls, data: Dict):
+        return Config(**data)

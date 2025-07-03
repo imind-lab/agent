@@ -1,0 +1,58 @@
+agent:
+  id: workflow-01
+  name: workflow-01
+  description: "This is a mathematical calculation assistant"
+  env:
+    base_url:
+      description: "the base url of the llm"
+      type: str
+      default: "http://127.0.0.1:8000/v1"
+  input:
+    list:
+      description: "源提示词"
+      required: True
+      type: list[str]
+      default: ""
+    num:
+      description: "生成的提示词个数"
+      type: int
+      default: 2
+  output:
+    content:
+      description: "content of result"
+      type: list[str]
+      source: reference
+      reference: llm.list
+nodes:
+  - name: if_route
+    type: condition
+    prev: rand
+    if:
+      logic_operator: and
+      condition:
+        - operator: lt
+          operand: rand_input.content
+          op_type: int
+          source: input
+          value: 3
+        - operator: gt
+          operand: rand_out.content
+          op_type: int
+          source: reference
+          value: 3
+      next: rand
+    elif:
+      - logic_operator: or
+        condition:
+          - operator: lt
+            operand: rand_input.content
+            op_type: int
+            source: input
+            value: 3
+          - operator: gt
+            operand: rand_out.content
+            op_type: int
+            source: reference
+            value: 3
+        next: rand
+    else: llm
