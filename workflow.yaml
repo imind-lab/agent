@@ -31,15 +31,15 @@ nodes:
       logic_operator: and
       condition:
         - operator: lt
-          operand: rand_input.content
+          operand: user_input.age
           op_type: int
           source: input
           value: 3
-        - operator: gt
-          operand: rand_out.content
-          op_type: int
-          source: reference
-          value: 3
+        - operator: eq
+          operand: llm_output.result.name
+          op_type: str
+          source: input
+          value: "daniel"
       next: rand
     elif:
       - logic_operator: or
@@ -52,7 +52,7 @@ nodes:
           - operator: gt
             operand: rand_out.content
             op_type: int
-            source: reference
+            source: input
             value: 3
         next: rand
     else: llm
