@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
 from pydantic import BaseModel, ConfigDict, create_model
 
-from imind_ai.agent.config.base import BaseNode
+from imind_ai.agent.workflow.graph.node import Node
 
 
 NODE_INPUT_TEMPLATE = "{node_id}_input"
@@ -17,7 +17,7 @@ class BaseState(BaseModel):
     extras: Dict[str, Any] = {}
 
 
-def new_state_cls(nodes: List[BaseNode]) -> Type[BaseState]:
+def new_state_cls(nodes: List[Node]) -> Type[BaseState]:
     schema_dict: Dict[str, Tuple] = {}
     for node in nodes:
         schema_dict[NODE_INPUT_TEMPLATE.format(node_id=node.id)] = (

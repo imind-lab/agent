@@ -24,6 +24,7 @@ class Parser:
         if isinstance(values, dict):
             config = Config.from_dict(values)
         else:
+            values = values or Path("./workflow.yaml")
             config = Config.from_file(values)
 
         schema = config.agent.env

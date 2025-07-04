@@ -1,7 +1,6 @@
 from pathlib import Path
 from typing import Any, Dict, Type, Union
-from openai import BaseModel
-from pydantic import Field, create_model
+from pydantic import BaseModel, Field, create_model
 import yaml
 
 

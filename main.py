@@ -42,78 +42,12 @@
 # if __name__ == "__main__":
 #     asyncio.run(main())
 
-from pathlib import Path
-from typing import Any
 
-from pydantic import BaseModel
-from imind_ai.agent.config.base import Config
+from imind_ai.agent.workflow.pipeline.context import Context
+from imind_ai.agent.workflow.pipeline.parser import Parser
 
 
-config = Config.from_file(Path("./workflow.yaml"))
-# print(config.nodes)
+context = Context()
 
-config = config.nodes[0]
-
-
-class Output(BaseModel):
-    status: int
-    result: dict
-
-
-class State(BaseModel):
-    user_input: dict
-    llm_output: Output
-
-
-output = Output(status=1, result={"name": "daniel"})
-
-state = State(user_input={"age": 18}, llm_output=output)
-
-
-def process_reference(ref: str, state: State) -> Any:
-    """取出引用对象的值
-    引用对象不存在时抛出异常
-    """
-    infos = ref.split(".")
-    entity = infos.pop(0)
-    print(entity, state)
-    if not hasattr(state, entity):
-        raise ValueError(f"引用的值不正确，请核实{ref}, {str(state)}")
-
-    item = getattr(state, entity)
-
-    while len(infos) > 0:
-        key = infos.pop(0)
-        if isinstance(item, dict):
-            item = item.get(key)
-            if item is None:
-                raise ValueError(f"引用的值不正确，请核实{ref}")
-        else:
-            if hasattr(item, key):
-                item = getattr(item, key)
-            else:
-                raise ValueError(f"引用的值不正确，请核实{ref}")
-    return item
-
-
-def judge(operator: str, operand: Any, right_hand: Any) -> bool:
-    if operator == "lt":
-        return operand < right_hand
-    elif operand == "eq":
-        return operand == right_hand
-
-
-if_express = config.if_express
-if if_express.logic_operator:
-    for condition in if_express.condition:
-        print(condition)
-        operand = process_reference(condition.operand, state)
-        print(operand)
-        right_hand = (
-            condition.value
-            if condition.source == "input"
-            else process_reference(condition.reference, state)
-        )
-
-        logic = judge(condition.operator, operand, right_hand)
-        print("logic", logic)
+config = Parser.parse(context)
+print(config)

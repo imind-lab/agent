@@ -1,9 +1,9 @@
-from imind_ai.agent.config.base import BaseNode
+from imind_ai.agent.config.base import BaseNodeConfig
 
 
 class Node:
 
-    def __init__(self, config: BaseNode):
+    def __init__(self, config: BaseNodeConfig):
         self.id = config.id
         self.name = config.name
         self.config = config

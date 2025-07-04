@@ -8,15 +8,15 @@ agent:
       type: str
       default: "http://127.0.0.1:8000/v1"
   input:
-    list:
+    query1:
       description: "源提示词"
       required: True
-      type: list[str]
+      type: str
       default: ""
-    num:
+    query2:
       description: "生成的提示词个数"
-      type: int
-      default: 2
+      type: str
+      default: ""
   output:
     content:
       description: "content of result"
@@ -30,29 +30,20 @@ nodes:
     if:
       logic_operator: and
       condition:
-        - operator: lt
-          operand: user_input.age
+        - operator: em
+          operand: user_input.query1
           op_type: int
           source: input
-          value: 3
-        - operator: eq
-          operand: llm_output.result.name
-          op_type: str
-          source: input
-          value: "daniel"
-      next: rand
+          value: 20
+      next: if_rand
     elif:
       - logic_operator: or
         condition:
-          - operator: lt
-            operand: rand_input.content
+          - operator: em
+            operand: user_input.query2
             op_type: int
             source: input
-            value: 3
-          - operator: gt
-            operand: rand_out.content
-            op_type: int
-            source: input
-            value: 3
-        next: rand
+            value: 20
+        next:
+          - "elif_rand"
     else: llm
