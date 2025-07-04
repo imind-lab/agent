@@ -45,9 +45,11 @@
 
 from imind_ai.agent.workflow.pipeline.context import Context
 from imind_ai.agent.workflow.pipeline.parser import Parser
+from imind_ai.agent.workflow.pipeline.planner import Planner
 
 
 context = Context()
 
-config = Parser.parse(context)
-print(config)
+Parser.parse(context)
+Planner.plan(context)
+print(context.nodes, context.edges, sep=", ")

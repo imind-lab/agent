@@ -18,7 +18,7 @@ class Planner:
                 context.edges.append((START, item.name))
 
             if item.type == "sdk":
-                node = BaseAgentNode(item)
+                node = BaseAgentNode(item, context)
                 context.nodes.append(node)
                 if item.next_type is None or item.next_type != "condition":
                     next = item.get_next()
@@ -29,6 +29,6 @@ class Planner:
                         context.edges.append((item.name, next))
 
             elif item.type == "condition":
-                node = ConditionNode(item)
+                node = ConditionNode(item, context)
                 print(node)
                 context.conditional_edges.append({"source": node.prev, "path": node})

@@ -21,75 +21,75 @@ class Phase(Enum):
 
 
 class Context(BaseContext):
-    __phase: Phase = Phase.INITIAL
-    __config: Config | None = None
-    __nodes: List[Node] = []
-    __edges: List[Tuple[str, str]] = []
-    __conditional_edges: List[Dict] = []
-    __graph: CompiledStateGraph | None = None
-    __settings: BaseSettings | None = None
-    __kwargs: Dict[str, Any] | None = None
+    _phase: Phase = Phase.INITIAL
+    _config: Config | None = None
+    _nodes: List[Node] = []
+    _edges: List[Tuple[str, str]] = []
+    _conditional_edges: List[Dict] = []
+    _graph: CompiledStateGraph | None = None
+    _settings: BaseSettings | None = None
+    _kwargs: Dict[str, Any] | None = None
 
     @property
     def phase(self) -> Phase:
-        return self.__phase
+        return self._phase
 
     @phase.setter
     def phase(self, phase: Phase) -> None:
-        self.set("__phase", phase)
+        self.set("_phase", phase)
 
     @property
     def config(self) -> Config | None:
-        return self.__config
+        return self._config
 
     @config.setter
     def config(self, config: Config) -> None:
-        self.set("__config", config)
+        self.set("_config", config)
 
     @property
     def nodes(self) -> List[Node]:
-        return self.__nodes
+        return self._nodes
 
     @nodes.setter
     def nodes(self, nodes: List[Node]) -> None:
-        self.set("__nodes", nodes)
+        self.set("_nodes", nodes)
 
     @property
     def edges(self) -> List[Tuple[str, str]]:
-        return self.__edges
+        return self._edges
 
     @edges.setter
     def edges(self, edges: List[Tuple[str, str]]) -> None:
-        self.set("__edges", edges)
+        self.set("_edges", edges)
 
     @property
     def conditional_edges(self) -> List[Dict]:
-        return self.__conditional_edges
+        return self._conditional_edges
 
     @conditional_edges.setter
     def conditional_edges(self, conditional_edges: List[Dict]) -> None:
-        self.set("__conditional_edges", conditional_edges)
+        self.set("_conditional_edges", conditional_edges)
 
     @property
     def graph(self) -> CompiledStateGraph | None:
-        return self.__graph
+        return self._graph
 
     @graph.setter
     def graph(self, graph: CompiledStateGraph) -> None:
-        self.set("__graph", graph)
+        self.set("_graph", graph)
 
     @property
     def settings(self) -> BaseSettings | None:
-        return self.__settings
+        return self._settings
 
     @settings.setter
     def settings(self, settings: BaseSettings) -> None:
-        self.set("__settings", settings)
+        self.set("_settings", settings)
 
     @property
     def kwargs(self) -> Dict[str, Any] | None:
-        return self.__kwargs
+        return self._kwargs
 
     @kwargs.setter
     def kwargs(self, kwargs: Dict[str, Any]) -> None:
-        self.set("__kwargs", kwargs)
+        self.set("_kwargs", kwargs)

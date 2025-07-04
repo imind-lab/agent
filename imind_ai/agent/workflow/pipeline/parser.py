@@ -27,12 +27,15 @@ class Parser:
             values = values or Path("./workflow.yaml")
             config = Config.from_file(values)
 
+        print(f"{config=}")
+
         schema = config.agent.env
         schema = update_schema(schema, env)
 
         setting_cls = build_settings_from_schema(schema)
 
         settings = setting_cls()
+        print(f"{settings=}")
 
         context.config = config
         context.settings = settings

@@ -26,7 +26,7 @@ agent:
 nodes:
   - name: if_route
     type: condition
-    prev: rand
+    prev: __start__
     if:
       logic_operator: and
       condition:
