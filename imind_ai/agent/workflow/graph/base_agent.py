@@ -50,4 +50,4 @@ class BaseAgentNode(Node):
         else:
             output = Output(_result=result.content)
 
-        return output
+        return {f"{self.id}_input": input.dict(), f"{self.id}_output": output.dict()}

@@ -26,7 +26,7 @@ agent:
       description: "content of result"
       type: list[str]
       source: reference
-      reference: base_agent_22.content
+      reference: base_agent_11_output._result
 nodes:
   - id: if_route
     name: if_route

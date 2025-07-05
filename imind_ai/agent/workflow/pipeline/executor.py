@@ -48,7 +48,6 @@ class Executor:
     @classmethod
     def build_graph(cls, context: Context):
         State = new_state_cls(context.nodes)
-        print("State=", State.model_fields)
 
         builder = StateGraph(State)
 
