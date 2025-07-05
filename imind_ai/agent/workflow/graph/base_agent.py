@@ -61,7 +61,7 @@ class BaseAgentNode(Node):
     async def build_agent(self):
         tools = None
         if self.config.mcp is not None:
-            mcp_client = MultiServerMCPClient(self.config.mcp.dict())
+            mcp_client = MultiServerMCPClient(self.config.mcp.dict(exclude_none=True))
             tools = await mcp_client.get_tools()
 
         output_schema = (
