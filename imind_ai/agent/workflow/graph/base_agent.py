@@ -32,17 +32,22 @@ class BaseAgentNode(Node):
     async def __call__(self, state: BaseState):
         params: Dict[str, Any] = {}
         depends = self.config.get_input_depends()
+
         for depend in depends:
             param = getattr(state, depend, None)
             if param is not None:
                 params[depend] = param
 
         input = self.config.build_input(**params)
-        result = await self.agent.chat(input.dict(), ctx=self.ctx)
+        print("input", type(input), input.dict())
+
+        result = await self.agent.achat(input, ctx=self.ctx)
+        print(f"{result=}")
+        print(type(result))
 
         if isinstance(result, dict):
             output = Output(**result)
         else:
-            output = Output("_result", result)
+            output = Output(_result=result.content)
 
         return output

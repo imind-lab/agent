@@ -76,6 +76,7 @@ class BaseNodeConfig(BaseModel):
 class NodeConfig(BaseNodeConfig):
 
     next: Union[str, List[str]]
+    next_type: Optional[Literal["condition"]] = None
 
 
 class BaseModelSchema(BaseModel):
@@ -117,7 +118,7 @@ class ConditionNodeConfig(BaseNodeConfig):
 
 class Config(BaseModel):
     agent: AgentConfig
-    nodes: List[Union[NodeConfig, ConditionNodeConfig]]
+    nodes: List[Union[BaseAgentNodeConfig, ConditionNodeConfig]]
 
     @classmethod
     def from_file(cls, path: Path | None = None) -> "Config":

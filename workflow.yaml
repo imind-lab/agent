@@ -9,12 +9,16 @@ agent:
       default: "http://127.0.0.1:8000/v1"
   input:
     query1:
-      description: "源提示词"
+      description: "query1"
       required: True
       type: str
       default: ""
     query2:
-      description: "生成的提示词个数"
+      description: "query2"
+      type: str
+      default: ""
+    query3:
+      description: "query3"
       type: str
       default: ""
   output:
@@ -22,28 +26,80 @@ agent:
       description: "content of result"
       type: list[str]
       source: reference
-      reference: llm.list
+      reference: base_agent_22.content
 nodes:
-  - name: if_route
+  - id: if_route
+    name: if_route
     type: condition
     prev: __start__
     if:
       logic_operator: and
       condition:
         - operator: em
-          operand: user_input.query1
+          operand: workflow_input.query1
           op_type: int
           source: input
           value: 20
-      next: if_rand
+      next: base_agent_11
     elif:
       - logic_operator: or
         condition:
           - operator: em
-            operand: user_input.query2
+            operand: workflow_input.query2
             op_type: int
             source: input
             value: 20
         next:
-          - "elif_rand"
-    else: llm
+          - "base_agent_22"
+    else: base_agent_33
+  - id: base_agent_11
+    name: base_agent_11
+    type: base_agent
+    description: "imind base agent example"
+    system_prompt: "You are a helpful assistant"
+    debug: false
+    input:
+      content:
+        description: "input content of echo"
+        type: str
+        source: reference
+        reference: workflow_input.query1
+    output: # 输出数据
+      result:
+        description: "content of result"
+        type: str
+    next: __end__
+  - id: base_agent_22
+    name: base_agent_22
+    type: base_agent
+    description: "imind base agent example"
+    system_prompt: "You are a helpful assistant"
+    debug: false
+    input:
+      content:
+        description: "input content of echo"
+        type: str
+        source: reference
+        reference: workflow_input.query2
+    output: # 输出数据
+      result:
+        description: "content of result"
+        type: str
+    next: __end__
+  - id: base_agent_33
+    name: base_agent_33
+    type: base_agent
+    description: "imind base agent example"
+    system_prompt: "You are a helpful assistant"
+    debug: false
+    input:
+      content:
+        description: "input content of echo"
+        type: str
+        source: reference
+        reference: workflow_input.query3
+    output: # 输出数据
+      result:
+        description: "content of result"
+        type: str
+    next: __end__

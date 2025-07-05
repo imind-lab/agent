@@ -14,14 +14,14 @@ class Planner:
         config = context.config
 
         for idx, item in enumerate(config.nodes):
-            if idx == 0:
-                context.edges.append((START, item.name))
+            # if idx == 0:
+            #     context.edges.append((START, item.name))
 
-            if item.type == "sdk":
+            if item.type == "base_agent":
                 node = BaseAgentNode(item, context)
                 context.nodes.append(node)
                 if item.next_type is None or item.next_type != "condition":
-                    next = item.get_next()
+                    next = item.next
                     if isinstance(next, list):
                         for n in next:
                             context.edges.append((item.name, n))

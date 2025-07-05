@@ -8,7 +8,7 @@ def process_depends(config: Dict) -> List[str]:
     params: Set[str] = set()
     for key, val in config.items():
         if isinstance(val, (AgentInput, AgentOutput)):
-            if val.value_type == "Dict" and isinstance(val.value_schema, dict):
+            if val.type == "Dict" and isinstance(val.value_schema, dict):
                 params = params.union(set(process_depends(val.value_schema)))  # type: ignore
             if val.source == "reference" and val.reference is not None:
                 infos = val.reference.split(".")
@@ -26,7 +26,7 @@ def process_params(config: Dict, **kwargs) -> Dict:
     for key, val in config.items():
         if isinstance(val, (AgentInput, AgentOutput)):
             if isinstance(val, AgentOutput):
-                if val.value_type == "Dict" and isinstance(
+                if val.type == "Dict" and isinstance(
                     val.value_schema, (AgentOutput, dict)
                 ):
                     params[key] = process_params(val.value_schema, **kwargs)  # type: ignore
@@ -55,12 +55,18 @@ def process_reference(ref: str, **kwargs) -> Any:
 
     item = kwargs[entity]
 
-    while len(infos) > 1:
+    while len(infos) > 0:
         key = infos.pop(0)
-        if hasattr(item, key):
-            item = getattr(item, key)
+        if isinstance(item, dict):
+            item = item.get(key)
+            if item is None:
+                raise ValueError(f"引用的值不正确，请核实{ref}")
         else:
-            raise ValueError(f"引用的值不正确，请核实{ref}")
+            if hasattr(item, key):
+                item = getattr(item, key)
+            else:
+                raise ValueError(f"引用的值不正确，请核实{ref}")
+    return item
 
 
 def case_value(
@@ -69,35 +75,35 @@ def case_value(
     params: Dict,
 ) -> None:
     if value.value is None:
-        params[key] = value.value_type.default_value()
+        params[key] = value.type.default_value()
         return
 
-    if value.value_type == "int":
+    if value.type == "int":
         if isinstance(value.value, int):
             params[key] = value.value  # type: ignore
         else:
             params[key] = int(value.value)  # type: ignore
-    elif value.value_type == "float":
+    elif value.type == "float":
         if isinstance(value.value, float):
             params[key] = value.value  # type: ignore
         else:
             params[key] = float(value.value)  # type: ignore
-    elif value.value_type == "bool":
+    elif value.type == "bool":
         if isinstance(value.value, bool):
             params[key] = value.value  # type: ignore
         else:
             params[key] = bool(value.value)  # type: ignore
-    elif value.value_type == "str":
+    elif value.type == "str":
         if isinstance(value.value, str):
             params[key] = value.value  # type: ignore
         else:
             params[key] = str(value.value)  # type: ignore
-    elif value.value_type.startswith("List"):
+    elif value.type.startswith("List"):
         if isinstance(value.value, list):
             params[key] = value.value  # type: ignore
         else:
             params[key] = list(value.value)  # type: ignore
-    elif value.value_type == "Dict":
+    elif value.type == "Dict":
         if isinstance(value.value, dict):
             params[key] = value.value  # type: ignore
         else:

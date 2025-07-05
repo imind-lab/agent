@@ -11,8 +11,8 @@ NODE_OUTPUT_TEMPLATE = "{node_id}_output"
 class BaseState(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    user_input: Union[str, Tuple[str, dict]]
-    workflow_output: Union[str, dict]
+    workflow_input: Union[str, Tuple[str, dict], dict]
+    workflow_output: Optional[Union[str, dict]] = None
 
     extras: Dict[str, Any] = {}
 

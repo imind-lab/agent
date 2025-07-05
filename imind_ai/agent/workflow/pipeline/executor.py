@@ -15,20 +15,21 @@ class Executor:
 
         cls.build_graph(context)
 
-        context.thread_id = context.thread_id or str(uuid4())
+        context.session_id = context.session_id or str(uuid4())
 
         config = {
             "configurable": {
-                "thread_id": context.thread_id,
+                "thread_id": context.session_id,
                 "checkpoint_ns": context.config.agent.id,
             }
         }
 
         inputs = {
-            "user_input": input.dict(),
+            "workflow_input": input.dict(),
         }
 
         state = await context.graph.ainvoke(inputs, config)
+        print(f"{state=}")
 
         params: Dict[str, Any] = {}
         agent = context.config.agent
@@ -47,6 +48,7 @@ class Executor:
     @classmethod
     def build_graph(cls, context: Context):
         State = new_state_cls(context.nodes)
+        print("State=", State.model_fields)
 
         builder = StateGraph(State)
 
