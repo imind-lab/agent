@@ -86,9 +86,26 @@ class BaseModelSchema(BaseModel):
     default: Optional[Any] = None
 
 
+class MCP(BaseModel):
+    transport: Literal["stdio", "streamable-http"] = "streamable-http"
+
+
+class MCPStdIO(MCP):
+    command: str
+    args: List[str]
+    env: Optional[Dict[str, Any]] = None
+    cwd: Optional[str] = None
+
+
+class MCPStreamableHttp(MCP):
+    url: str
+    headers: Optional[Dict[str, Any]] = None
+
+
 class BaseAgentNodeConfig(NodeConfig, AgentConfig):
     system_prompt: Optional[str] = None
     output_schema: Optional[Dict[str, BaseModelSchema]] = None
+    mcp: Optional[Dict[str, Union[MCPStreamableHttp, MCPStdIO]]] = None
     debug: bool = False
 
 
