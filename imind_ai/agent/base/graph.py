@@ -119,6 +119,7 @@ def create_base_agent(
 
     async def post_processor(state: State):
         if output_schema:
+            print("output_schema", output_schema, output_schema.model_json_schema())
             response = llm.with_structured_output(output_schema).invoke(
                 [HumanMessage(content=state["messages"][-1].content)]
             )

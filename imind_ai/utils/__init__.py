@@ -63,26 +63,42 @@ def create_dynamic_model(schema: Dict[str, Union[BaseModel, Dict]]) -> Type[Base
     schema_dict = {}
     for key, value in schema.items():
         if isinstance(value, BaseModel):
-            alias = value.alias
+            alias = value.alias if hasattr(value, "alias") else None
             description = value.description
-            if value.default is not None:
-                schema_dict[key] = (
-                    type_mapping[value.type],
-                    Field(description=description, default=value.default, alias=alias),
-                )
+            if value.required is None or value.required:
+                if value.default is not None:
+                    schema_dict[key] = (
+                        type_mapping[value.type],
+                        Field(
+                            description=description, default=value.default, alias=alias
+                        ),
+                    )
+                else:
+                    schema_dict[key] = (
+                        type_mapping[value.type],
+                        Field(description=description, alias=alias),
+                    )
             else:
                 schema_dict[key] = (
                     type_mapping[value.type] | None,
-                    Field(description=description, default=None, alias=alias),
+                    Field(description=description, default=value.default, alias=alias),
                 )
         else:
             alias = value.get("alias", None)
             description = value.get("description", None)
-            if "value" in value and value["value"] is not None:
-                schema_dict[key] = (
-                    type_mapping[value["type"]],
-                    Field(description=description, default=value["value"], alias=alias),
-                )
+            required = value.get("required", True)
+            default = value.get("default", None)
+            if required:
+                if default is None:
+                    schema_dict[key] = (
+                        type_mapping[value["type"]],
+                        Field(description=description, alias=alias),
+                    )
+                else:
+                    schema_dict[key] = (
+                        type_mapping[value["type"]],
+                        Field(description=description, default=default, alias=alias),
+                    )
             else:
                 schema_dict[key] = (
                     type_mapping[value["type"]] | None,

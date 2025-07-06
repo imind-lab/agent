@@ -79,15 +79,8 @@ class NodeConfig(BaseNodeConfig):
     next_type: Optional[Literal["condition"]] = None
 
 
-class BaseModelSchema(BaseModel):
-    type: str
-    description: Optional[str] = None
-    alias: Optional[str] = None
-    default: Optional[Any] = None
-
-
 class MCP(BaseModel):
-    transport: Literal["stdio", "streamable-http"] = "streamable-http"
+    transport: Literal["stdio", "streamable_http"] = "streamable_http"
 
 
 class MCPStdIO(MCP):
@@ -104,7 +97,6 @@ class MCPStreamableHttp(MCP):
 
 class BaseAgentNodeConfig(NodeConfig, AgentConfig):
     system_prompt: Optional[str] = None
-    output_schema: Optional[Dict[str, BaseModelSchema]] = None
     mcp: Optional[Dict[str, Union[MCPStreamableHttp, MCPStdIO]]] = None
     debug: bool = False
 

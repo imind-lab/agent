@@ -26,7 +26,7 @@ agent:
       description: "content of result"
       type: list[str]
       source: reference
-      reference: base_agent_11_output._result
+      reference: base_agent_11_output.temperature
 nodes:
   - id: if_route
     name: if_route
@@ -58,6 +58,10 @@ nodes:
     description: "imind base agent example"
     system_prompt: "You are a helpful assistant"
     debug: false
+    mcp:
+      weather:
+        url: http://localhost:8888/echo/mcp
+        transport: streamable_http
     input:
       content:
         description: "input content of echo"
@@ -65,9 +69,15 @@ nodes:
         source: reference
         reference: workflow_input.query1
     output: # 输出数据
-      result:
-        description: "content of result"
+      temperature:
+        description: "The temperature in fahrenheit"
+        type: float
+      wind_directon:
+        description: "The direction of the wind in abbreviated form"
         type: str
+      wind_speed:
+        description: "The speed of the wind in km/h"
+        type: float
     next: __end__
   - id: base_agent_22
     name: base_agent_22

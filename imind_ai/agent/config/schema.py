@@ -102,6 +102,7 @@ class Output(IO):
 class Env(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
 
+    required: Optional[bool] = Field(default=False)
     description: str = Field(default="")
     type: ValueType = Field(default="str")
     default: Union[str, int, bool, float, list, dict, None] = None
@@ -122,6 +123,7 @@ class AgentInput(BaseModel):
 class AgentOutput(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
 
+    required: Optional[bool] = Field(default=True)
     description: Optional[str] = Field(default="")
     type: ValueType = Field(default="str")
     default: Optional[Union[str, int, bool, float, list, dict]] = None

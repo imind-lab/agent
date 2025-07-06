@@ -13,6 +13,7 @@ class IOOption(BaseModel):
 
 
 class EnvOption(BaseModel):
+    required: Optional[bool] = False
     alias: Optional[str] = None
     description: str
     type: str

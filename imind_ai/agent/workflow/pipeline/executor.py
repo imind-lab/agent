@@ -40,6 +40,7 @@ class Executor:
                 params[depend] = param
 
         output = agent.build_output(**params)
+        print(f"output", output.dict())
 
         context.phase = Phase.EXECUTED
 

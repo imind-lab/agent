@@ -59,8 +59,6 @@ def process_reference(ref: str, **kwargs) -> Any:
         key = infos.pop(0)
         if isinstance(item, dict):
             item = item.get(key)
-            if item is None:
-                raise ValueError(f"引用的值不正确，请核实{ref}")
         else:
             if hasattr(item, key):
                 item = getattr(item, key)

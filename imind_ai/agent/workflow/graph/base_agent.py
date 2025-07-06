@@ -1,4 +1,6 @@
 from typing import Any, Dict
+
+from pydantic import BaseModel
 from imind_ai.agent.base.agent import BaseAgent
 from imind_ai.agent.config.base import BaseAgentNodeConfig
 from imind_ai.agent.config.schema import Output
@@ -53,15 +55,24 @@ class BaseAgentNode(Node):
 
         if isinstance(result, dict):
             output = Output(**result)
+        elif isinstance(result, BaseModel):
+            data = result.model_dump()
+            print(f"{data=}")
+            output = Output(**data)
         else:
             output = Output(_result=result.content)
+
+        print("output", output.dict())
 
         return {f"{self.id}_input": input.dict(), f"{self.id}_output": output.dict()}
 
     async def build_agent(self):
         tools = None
         if self.config.mcp is not None:
-            mcp_client = MultiServerMCPClient(self.config.mcp.dict(exclude_none=True))
+            print("mcp", self.config.mcp)
+            mcp_client = MultiServerMCPClient(
+                self.config.model_dump(exclude_none=True)["mcp"]
+            )
             tools = await mcp_client.get_tools()
 
         output_schema = (
