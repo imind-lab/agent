@@ -107,11 +107,13 @@ class BaseAgent:
     ) -> AsyncGenerator[str, None]:
         inputs, config = await self.pre_process(user_input, ctx)
 
+        node_name = "llm_caller" if self.output_schema is None else "post_processor"
+
         async for message_chunk, metadata in self.agent.astream(
             inputs, config=config, stream_mode="messages"
         ):
             if (
-                metadata["langgraph_node"] == "llm_caller"
+                metadata["langgraph_node"] == node_name
                 and isinstance(message_chunk, AIMessageChunk)
                 and len(message_chunk.tool_calls) == 0
                 and message_chunk.content

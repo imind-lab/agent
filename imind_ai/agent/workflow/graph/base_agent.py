@@ -19,9 +19,9 @@ class BaseAgentNode(Node):
 
         if config.mcp is None:
             output_schema = (
-                None
-                if config.output_schema is None
-                else create_dynamic_model(config.output_schema)
+                create_dynamic_model(config.output)
+                if isinstance(config.output, dict)
+                else None
             )
 
             self.agent = BaseAgent(
@@ -65,9 +65,9 @@ class BaseAgentNode(Node):
             tools = await mcp_client.get_tools()
 
         output_schema = (
-            None
-            if self.config.output_schema is None
-            else create_dynamic_model(self.config.output_schema)
+            create_dynamic_model(self.config.output)
+            if isinstance(self.config.output, dict)
+            else None
         )
 
         self.agent = BaseAgent(

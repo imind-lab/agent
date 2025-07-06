@@ -3,10 +3,7 @@ input:
     description: "the content of input"
     type: int
     default: 0
-output:
-  content:
-    description: "the content of output"
-    type: str
+output: str
 
 env:
   model:

@@ -1,4 +1,6 @@
 import asyncio
+from typing import final
+from urllib import response
 
 from pydantic import BaseModel, Field
 from imind_ai.agent.base.agent import BaseAgent
@@ -31,12 +33,20 @@ async def main():
     agent = BaseAgent(
         name="koofox",
         system_prompt="You are a helpful assistant",
-        output_schema=WeatherResponse,
+        # output_schema=WeatherResponse,
         tools=tools,
     )
-    user_input = Input(content="what's the weather in SF?")
+    # user_input = Input(content="what's the weather in SF?")
+    user_input = Input(content="你是谁？")
     resp = await agent.achat(user_input)
     print("resp", resp)
+
+    final_response = ""
+    async for message in agent.achat_stream(user_input):
+        print(message)
+        final_response += message
+
+    print(f"{final_response=}")
 
 
 if __name__ == "__main__":
