@@ -4,7 +4,7 @@ from imind_ai.agent.workflow.graph.state import BaseState
 from imind_ai.agent.workflow.pipeline.context import Context
 
 
-class BaseAgentNode(Node):
+class LoopAggregationNode(Node):
 
     def __init__(self, config: LoopAggregationNodeConfig, ctx: Context):
         super().__init__(config)
@@ -16,12 +16,29 @@ class BaseAgentNode(Node):
             await self.build_agent()
 
         counter = getattr(state, f"{self.id}_counter")
-        aggregaton = getattr(state, f"{self.id}_aggregaton")
-        if aggregaton is None:
-            aggregaton = {}
+        agg_items = getattr(state, f"{self.id}_agg_items")
+        if agg_items is None:
+            agg_items = {}
         else:
-            counter += 0
+            counter += 1
 
-        for item in self.config.aggregation.items():
+        aggregation = {}
+        for key, value in self.config.aggregation.items():
+            agg_type = value.agg_type
+            reference = self.process_reference(value.reference, state)
+            items = agg_items.get(key, [])
+            if reference is not None:
+                items.append(value)
+                agg_items[key] = items
 
-            pass
+            if agg_type == "sum":
+                ret = sum(items)
+            elif agg_type == "mean":
+                ret = sum(items) / len(items)
+            aggregation[key] = ret
+
+        return {
+            f"{self.id}_counter": counter,
+            f"{self.id}_agg_items": agg_items,
+            f"{self.id}_aggregation": aggregation,
+        }
