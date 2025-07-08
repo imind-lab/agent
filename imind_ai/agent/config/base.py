@@ -125,6 +125,16 @@ class ConditionNodeConfig(BaseNodeConfig):
     else_express: Optional[Union[str, List[str]]] = Field(default=None, alias="else")
 
 
+class Aggregation(BaseModel):
+    reference: str
+    agg_type: str
+
+
+class LoopAggregationNodeConfig(BaseNodeConfig):
+    aggregation: Dict[str, Aggregation]
+    next: Union[str, List[str]]
+
+
 class Config(BaseModel):
     agent: AgentConfig
     nodes: List[Union[BaseAgentNodeConfig, ConditionNodeConfig]]
