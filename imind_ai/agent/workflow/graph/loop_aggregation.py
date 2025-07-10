@@ -1,10 +1,11 @@
 from imind_ai.agent.config.base import LoopAggregationNodeConfig
 from imind_ai.agent.workflow.graph.node import Node
+from imind_ai.agent.workflow.graph.node_mixin import NodeMixin
 from imind_ai.agent.workflow.graph.state import BaseState
 from imind_ai.agent.workflow.pipeline.context import Context
 
 
-class LoopAggregationNode(Node):
+class LoopAggregationNode(Node, NodeMixin):
 
     def __init__(self, config: LoopAggregationNodeConfig, ctx: Context):
         super().__init__(config)
