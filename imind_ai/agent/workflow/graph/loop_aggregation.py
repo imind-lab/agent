@@ -35,6 +35,8 @@ class LoopAggregationNode(Node):
                 ret = sum(items)
             elif agg_type == "mean":
                 ret = sum(items) / len(items)
+            elif agg_type == "list":
+                ret = items
             aggregation[key] = ret
 
         return {

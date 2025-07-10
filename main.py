@@ -69,9 +69,7 @@ print(context.nodes, context.edges, context.conditional_edges, sep=", \n")
 
 async def main():
     data = {
-        "query1": "what's the weather in SF?",
-        "query2": "你是谁？",
-        "query3": "你是谁？",
+        "query": "讲个笑话",
     }
     input = Input(**data)
     resp = await Executor.execute(context, input)

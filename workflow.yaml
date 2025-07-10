@@ -1,3 +1,119 @@
+# agent:
+#   id: workflow-01
+#   name: workflow-01
+#   description: "This is a mathematical calculation assistant"
+#   env:
+#     base_url:
+#       description: "the base url of the llm"
+#       type: str
+#       default: "http://127.0.0.1:8000/v1"
+#   input:
+#     query1:
+#       description: "query1"
+#       required: True
+#       type: str
+#       default: ""
+#     query2:
+#       description: "query2"
+#       type: str
+#       default: ""
+#     query3:
+#       description: "query3"
+#       type: str
+#       default: ""
+#   output:
+#     content:
+#       description: "content of result"
+#       type: list[str]
+#       source: reference
+#       reference: base_agent_11_output.temperature
+# nodes:
+#   - id: if_route
+#     name: if_route
+#     type: condition
+#     prev: __start__
+#     if:
+#       logic_operator: and
+#       condition:
+#         - operator: em
+#           operand: workflow_input.query1
+#           op_type: int
+#           source: input
+#           value: 20
+#       next: base_agent_11
+#     elif:
+#       - logic_operator: or
+#         condition:
+#           - operator: em
+#             operand: workflow_input.query2
+#             op_type: int
+#             source: input
+#             value: 20
+#         next:
+#           - "base_agent_22"
+#     else: base_agent_33
+#   - id: base_agent_11
+#     name: base_agent_11
+#     type: base_agent
+#     description: "imind base agent example"
+#     system_prompt: "You are a helpful assistant"
+#     debug: false
+#     mcp:
+#       weather:
+#         url: http://localhost:8888/echo/mcp
+#         transport: streamable_http
+#     input:
+#       content:
+#         description: "input content of echo"
+#         type: str
+#         source: reference
+#         reference: workflow_input.query1
+#     output: # 输出数据
+#       temperature:
+#         description: "The temperature in fahrenheit"
+#         type: float
+#       wind_directon:
+#         description: "The direction of the wind in abbreviated form"
+#         type: str
+#       wind_speed:
+#         description: "The speed of the wind in km/h"
+#         type: float
+#     next: __end__
+#   - id: base_agent_22
+#     name: base_agent_22
+#     type: base_agent
+#     description: "imind base agent example"
+#     system_prompt: "You are a helpful assistant"
+#     debug: false
+#     input:
+#       content:
+#         description: "input content of echo"
+#         type: str
+#         source: reference
+#         reference: workflow_input.query2
+#     output: # 输出数据
+#       result:
+#         description: "content of result"
+#         type: str
+#     next: __end__
+#   - id: base_agent_33
+#     name: base_agent_33
+#     type: base_agent
+#     description: "imind base agent example"
+#     system_prompt: "You are a helpful assistant"
+#     debug: false
+#     input:
+#       content:
+#         description: "input content of echo"
+#         type: str
+#         source: reference
+#         reference: workflow_input.query3
+#     output: # 输出数据
+#       result:
+#         description: "content of result"
+#         type: str
+#     next: __end__
+
 agent:
   id: workflow-01
   name: workflow-01
@@ -8,17 +124,9 @@ agent:
       type: str
       default: "http://127.0.0.1:8000/v1"
   input:
-    query1:
-      description: "query1"
+    query:
+      description: "query"
       required: True
-      type: str
-      default: ""
-    query2:
-      description: "query2"
-      type: str
-      default: ""
-    query3:
-      description: "query3"
       type: str
       default: ""
   output:
@@ -28,88 +136,42 @@ agent:
       source: reference
       reference: base_agent_11_output.temperature
 nodes:
+  - id: base_agent
+    prev: __start__
+    name: base_agent
+    type: base_agent
+    description: "imind base agent example"
+    system_prompt: "You are a helpful assistant"
+    debug: false
+    input:
+      content:
+        description: "input content of echo"
+        type: str
+        source: reference
+        reference: workflow_input.query
+    output: # 输出数据
+      result:
+        description: "content of result"
+        type: str
+    next: loop_agg
+  - id: loop_agg
+    name: loop_agg
+    type: loop_aggregation
+    aggregation:
+      aigc:
+        reference: base_agent_output.result
+        agg_type: list
+    next: if_route
   - id: if_route
     name: if_route
     type: condition
-    prev: __start__
     if:
       logic_operator: and
       condition:
-        - operator: em
-          operand: workflow_input.query1
+        - operator: lt
+          operand: loop_agg_counter
           op_type: int
           source: input
-          value: 20
-      next: base_agent_11
-    elif:
-      - logic_operator: or
-        condition:
-          - operator: em
-            operand: workflow_input.query2
-            op_type: int
-            source: input
-            value: 20
-        next:
-          - "base_agent_22"
-    else: base_agent_33
-  - id: base_agent_11
-    name: base_agent_11
-    type: base_agent
-    description: "imind base agent example"
-    system_prompt: "You are a helpful assistant"
-    debug: false
-    mcp:
-      weather:
-        url: http://localhost:8888/echo/mcp
-        transport: streamable_http
-    input:
-      content:
-        description: "input content of echo"
-        type: str
-        source: reference
-        reference: workflow_input.query1
-    output: # 输出数据
-      temperature:
-        description: "The temperature in fahrenheit"
-        type: float
-      wind_directon:
-        description: "The direction of the wind in abbreviated form"
-        type: str
-      wind_speed:
-        description: "The speed of the wind in km/h"
-        type: float
-    next: __end__
-  - id: base_agent_22
-    name: base_agent_22
-    type: base_agent
-    description: "imind base agent example"
-    system_prompt: "You are a helpful assistant"
-    debug: false
-    input:
-      content:
-        description: "input content of echo"
-        type: str
-        source: reference
-        reference: workflow_input.query2
-    output: # 输出数据
-      result:
-        description: "content of result"
-        type: str
-    next: __end__
-  - id: base_agent_33
-    name: base_agent_33
-    type: base_agent
-    description: "imind base agent example"
-    system_prompt: "You are a helpful assistant"
-    debug: false
-    input:
-      content:
-        description: "input content of echo"
-        type: str
-        source: reference
-        reference: workflow_input.query3
-    output: # 输出数据
-      result:
-        description: "content of result"
-        type: str
-    next: __end__
+          value: 3
+      next: base_agent
+    else: __end__
