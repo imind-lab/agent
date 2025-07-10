@@ -20,12 +20,17 @@ class BaseState(BaseModel):
 def new_state_cls(nodes: List[Node]) -> Type[BaseState]:
     schema_dict: Dict[str, Tuple] = {}
     for node in nodes:
-        schema_dict[NODE_INPUT_TEMPLATE.format(node_id=node.id)] = (
-            Optional[Union[str, Dict[str, Any]]],
-            None,
-        )
-        schema_dict[NODE_OUTPUT_TEMPLATE.format(node_id=node.id)] = (
-            Optional[Union[str, Dict[str, Any]]],
-            None,
-        )
+        if node.type == "loop_aggregation":
+            schema_dict[f"{node.id}_counter"] = (int, 0)
+            schema_dict[f"{node.id}_agg_items"] = (Optional[List[Any]], None)
+            schema_dict[f"{node.id}_aggregation"] = (Optional[Any], None)
+        else:
+            schema_dict[NODE_INPUT_TEMPLATE.format(node_id=node.id)] = (
+                Optional[Union[str, Dict[str, Any]]],
+                None,
+            )
+            schema_dict[NODE_OUTPUT_TEMPLATE.format(node_id=node.id)] = (
+                Optional[Union[str, Dict[str, Any]]],
+                None,
+            )
     return create_model("State", __base__=BaseState, **schema_dict)

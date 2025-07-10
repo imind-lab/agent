@@ -162,9 +162,11 @@ nodes:
         reference: base_agent_output.result
         agg_type: list
     next: if_route
+    next_type: condition
   - id: if_route
     name: if_route
     type: condition
+    prev: loop_agg
     if:
       logic_operator: and
       condition:

@@ -70,12 +70,14 @@ class AgentConfig(BaseModel):
 class BaseNodeConfig(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
     name: str = Field(default="")
-    type: Literal["rag", "sdk", "base_agent", "condition"] = Field(default="base_agent")
+    type: Literal["rag", "sdk", "base_agent", "condition", "loop_aggregation"] = Field(
+        default="base_agent"
+    )
 
 
 class NodeConfig(BaseNodeConfig):
 
-    next: Union[str, List[str]]
+    next: Optional[Union[str, List[str]]] = None
     next_type: Optional[Literal["condition"]] = None
 
 
