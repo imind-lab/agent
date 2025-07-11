@@ -76,7 +76,7 @@ class BaseNodeConfig(BaseModel):
 
 
 class NodeConfig(BaseNodeConfig):
-
+    prev: Optional[str] = None
     next: Optional[Union[str, List[str]]] = None
     next_type: Optional[Literal["condition"]] = None
 
