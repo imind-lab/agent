@@ -20,6 +20,7 @@ class BaseState(BaseModel):
 def new_state_cls(nodes: List[Node]) -> Type[BaseState]:
     schema_dict: Dict[str, Tuple] = {}
     for node in nodes:
+
         if node.type == "loop_aggregation":
             schema_dict[f"{node.id}_counter"] = (int, 0)
             schema_dict[f"{node.id}_agg_items"] = (Optional[List[Any]], None)
@@ -33,4 +34,5 @@ def new_state_cls(nodes: List[Node]) -> Type[BaseState]:
                 Optional[Union[str, Dict[str, Any]]],
                 None,
             )
+    print(f"{schema_dict=}")
     return create_model("State", __base__=BaseState, **schema_dict)

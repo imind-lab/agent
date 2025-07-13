@@ -14,6 +14,8 @@ class LoopAggregationNode(Node, NodeMixin):
 
     async def __call__(self, state: BaseState):
 
+        print("LoopAggregationNode state", state)
+
         counter = getattr(state, f"{self.id}_counter")
         agg_items = getattr(state, f"{self.id}_agg_items")
         if agg_items is None:
