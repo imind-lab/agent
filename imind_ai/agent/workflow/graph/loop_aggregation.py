@@ -12,9 +12,11 @@ class LoopAggregationNode(Node, NodeMixin):
 
         self.ctx = ctx
 
-    async def __call__(self, state: BaseState):
+    async def __call__(self, state):
 
-        print("LoopAggregationNode state", state)
+        print("LoopAggregationNode state", type(state))
+        if isinstance(state, self.ctx.state):
+            print(f"{state=}")
 
         counter = getattr(state, f"{self.id}_counter")
         agg_items = getattr(state, f"{self.id}_agg_items")

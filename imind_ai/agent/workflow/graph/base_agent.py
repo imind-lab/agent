@@ -35,7 +35,7 @@ class BaseAgentNode(Node):
             )
 
     async def __call__(self, state: BaseState):
-        print("BaseAgentNode state", state)
+        print("BaseAgentNode state", type(state), self.ctx.state)
 
         if not hasattr(self, "agent"):
             await self.build_agent()

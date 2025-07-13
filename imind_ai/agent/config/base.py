@@ -135,11 +135,14 @@ class Aggregation(BaseModel):
 class LoopAggregationNodeConfig(BaseNodeConfig):
     aggregation: Dict[str, Aggregation]
     next: Union[str, List[str]]
+    next_type: Optional[Literal["condition"]] = None
 
 
 class Config(BaseModel):
     agent: AgentConfig
-    nodes: List[Union[BaseAgentNodeConfig, ConditionNodeConfig]]
+    nodes: List[
+        Union[BaseAgentNodeConfig, ConditionNodeConfig, LoopAggregationNodeConfig]
+    ]
 
     @classmethod
     def from_file(cls, path: Path | None = None) -> "Config":

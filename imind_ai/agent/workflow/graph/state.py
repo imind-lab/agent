@@ -1,5 +1,5 @@
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
-from pydantic import BaseModel, ConfigDict, create_model
+from pydantic import BaseModel, ConfigDict, Field, create_model
 
 from imind_ai.agent.workflow.graph.node import Node
 
@@ -17,8 +17,10 @@ class BaseState(BaseModel):
     extras: Dict[str, Any] = {}
 
 
-def new_state_cls(nodes: List[Node]) -> Type[BaseState]:
+def new_state_cls(nodes: List[Node]) -> Type[BaseModel]:
     schema_dict: Dict[str, Tuple] = {}
+    schema_dict["workflow_input"] = (Union[str, Tuple[str, dict], dict], Field())
+    schema_dict["workflow_output"] = Optional[Union[str, dict]], None
     for node in nodes:
 
         if node.type == "loop_aggregation":
@@ -35,4 +37,4 @@ def new_state_cls(nodes: List[Node]) -> Type[BaseState]:
                 None,
             )
     print(f"{schema_dict=}")
-    return create_model("State", __base__=BaseState, **schema_dict)
+    return create_model("State", **schema_dict)

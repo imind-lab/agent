@@ -7,6 +7,7 @@ from pydantic_settings import BaseSettings
 from imind_ai.agent.config.base import Config
 from imind_ai.agent.workflow.graph.node import Node
 from imind_ai.utils.context import BaseContext
+from imind_ai.agent.workflow.graph.state import BaseState
 
 
 class Phase(Enum):
@@ -24,6 +25,7 @@ class Context(BaseContext):
     _phase: Phase = Phase.INITIAL
     _config: Config | None = None
     _nodes: List[Node] = []
+    _state: BaseState | None = None
     _edges: List[Tuple[str, str]] = []
     _conditional_edges: List[Dict] = []
     _graph: CompiledStateGraph | None = None
@@ -53,6 +55,14 @@ class Context(BaseContext):
     @nodes.setter
     def nodes(self, nodes: List[Node]) -> None:
         self.set("_nodes", nodes)
+
+    @property
+    def state(self) -> BaseState | None:
+        return self._state
+
+    @state.setter
+    def state(self, state: BaseState) -> None:
+        self.set("_state", state)
 
     @property
     def edges(self) -> List[Tuple[str, str]]:
