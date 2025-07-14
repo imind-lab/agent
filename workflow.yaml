@@ -134,7 +134,7 @@ agent:
       description: "content of result"
       type: list[str]
       source: reference
-      reference: base_agent_11_output.temperature
+      reference: loop_agg_output.aggregation
 nodes:
   - id: base_agent
     prev: __start__
@@ -171,7 +171,7 @@ nodes:
       logic_operator: and
       condition:
         - operator: lt
-          operand: loop_agg_counter
+          operand: loop_agg_output.counter
           op_type: int
           source: input
           value: 3

@@ -1,7 +1,9 @@
+from typing import cast
+
+from pydantic import BaseModel
 from imind_ai.agent.config.base import LoopAggregationNodeConfig
 from imind_ai.agent.workflow.graph.node import Node
 from imind_ai.agent.workflow.graph.node_mixin import NodeMixin
-from imind_ai.agent.workflow.graph.state import BaseState
 from imind_ai.agent.workflow.pipeline.context import Context
 
 
@@ -12,14 +14,14 @@ class LoopAggregationNode(Node, NodeMixin):
 
         self.ctx = ctx
 
-    async def __call__(self, state):
+    async def __call__(self, state: BaseModel):
 
         print("LoopAggregationNode state", type(state))
-        if isinstance(state, self.ctx.state):
-            print(f"{state=}")
 
-        counter = getattr(state, f"{self.id}_counter")
-        agg_items = getattr(state, f"{self.id}_agg_items")
+        la_state = getattr(state, f"{self.id}_output") or {}
+
+        counter = la_state.get("counter", 0)
+        agg_items = la_state.get("agg_items")
         if agg_items is None:
             agg_items = {}
         else:
@@ -31,7 +33,7 @@ class LoopAggregationNode(Node, NodeMixin):
             reference = self.process_reference(value.reference, state)
             items = agg_items.get(key, [])
             if reference is not None:
-                items.append(value)
+                items.append(reference)
                 agg_items[key] = items
 
             if agg_type == "sum":
@@ -43,7 +45,9 @@ class LoopAggregationNode(Node, NodeMixin):
             aggregation[key] = ret
 
         return {
-            f"{self.id}_counter": counter,
-            f"{self.id}_agg_items": agg_items,
-            f"{self.id}_aggregation": aggregation,
+            f"{self.id}_output": {
+                "counter": counter,
+                "agg_items": agg_items,
+                "aggregation": aggregation,
+            }
         }

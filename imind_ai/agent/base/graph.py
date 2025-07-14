@@ -40,7 +40,7 @@ def create_base_agent(
     debug: bool = False,
 ) -> CompiledGraph:
     tools = tools or []
-    summarization_model = llm.bind(max_tokens=128)
+    summarization_model = llm
 
     summarizer = SummarizationNode(
         token_counter=llm.get_num_tokens_from_messages,

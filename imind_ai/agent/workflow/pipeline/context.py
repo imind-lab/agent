@@ -2,12 +2,12 @@ from enum import Enum
 from typing import Any, Callable, List, Tuple, Dict
 
 from langgraph.graph.state import CompiledStateGraph
+from pydantic import BaseModel
 from pydantic_settings import BaseSettings
 
 from imind_ai.agent.config.base import Config
 from imind_ai.agent.workflow.graph.node import Node
 from imind_ai.utils.context import BaseContext
-from imind_ai.agent.workflow.graph.state import BaseState
 
 
 class Phase(Enum):
@@ -25,7 +25,7 @@ class Context(BaseContext):
     _phase: Phase = Phase.INITIAL
     _config: Config | None = None
     _nodes: List[Node] = []
-    _state: BaseState | None = None
+    _state: BaseModel | None = None
     _edges: List[Tuple[str, str]] = []
     _conditional_edges: List[Dict] = []
     _graph: CompiledStateGraph | None = None
@@ -57,11 +57,11 @@ class Context(BaseContext):
         self.set("_nodes", nodes)
 
     @property
-    def state(self) -> BaseState | None:
+    def state(self) -> BaseModel | None:
         return self._state
 
     @state.setter
-    def state(self, state: BaseState) -> None:
+    def state(self, state: BaseModel) -> None:
         self.set("_state", state)
 
     @property

@@ -1,9 +1,11 @@
+from ctypes import cast
 from typing import Any
-from imind_ai.agent.workflow.graph.state import BaseState
+
+from pydantic import BaseModel
 
 
 class NodeMixin:
-    def process_reference(self, ref: str, state: BaseState) -> Any:
+    def process_reference(self, ref: str, state: BaseModel) -> Any:
         """取出引用对象的值
         引用对象不存在时抛出异常
         """

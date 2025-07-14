@@ -1,8 +1,10 @@
 from typing import Any
+
+from pydantic import BaseModel
 from imind_ai.agent.config.base import ConditionNodeConfig
 from imind_ai.agent.workflow.graph.node import Node
 from imind_ai.agent.workflow.graph.node_mixin import NodeMixin
-from imind_ai.agent.workflow.graph.state import BaseState
+
 from imind_ai.agent.workflow.pipeline.context import Context
 
 
@@ -12,7 +14,7 @@ class ConditionNode(Node, NodeMixin):
         self.prev = config.prev
         self.ctx = ctx
 
-    def __call__(self, state: BaseState):
+    def __call__(self, state: BaseModel):
         if_express = self.config.if_express
 
         is_meet = True
@@ -36,7 +38,7 @@ class ConditionNode(Node, NodeMixin):
         if is_meet:
             return if_express.next
 
-        elif_express = self.config.elif_express
+        elif_express = self.config.elif_express or []
 
         for elif_condition in elif_express:
             is_meet = True
