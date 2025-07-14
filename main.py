@@ -64,7 +64,6 @@ context = Context()
 
 Parser.parse(context)
 Planner.plan(context)
-print(context.nodes, context.edges, context.conditional_edges, sep=", \n")
 
 
 async def main():
@@ -73,7 +72,7 @@ async def main():
     }
     input = Input(**data)
     resp = await Executor.execute(context, input)
-    print(resp)
+    print("resp", resp.dict()["content"]["aigc"], len(resp.dict()["content"]["aigc"]))
 
 
 if __name__ == "__main__":

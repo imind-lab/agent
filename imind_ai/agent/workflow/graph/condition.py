@@ -19,9 +19,9 @@ class ConditionNode(Node, NodeMixin):
 
         is_meet = True
         for condition in if_express.condition:
-            print(condition)
+
             operand = self.process_reference(condition.operand, state)
-            print(operand)
+
             right_hand = (
                 condition.value
                 if condition.source == "input"
@@ -43,9 +43,9 @@ class ConditionNode(Node, NodeMixin):
         for elif_condition in elif_express:
             is_meet = True
             for condition in elif_condition.condition:
-                print(condition)
+
                 operand = self.process_reference(condition.operand, state)
-                print(operand)
+
                 right_hand = (
                     condition.value
                     if condition.source == "input"
@@ -64,7 +64,7 @@ class ConditionNode(Node, NodeMixin):
         return self.config.else_express
 
     def exec_judgment(self, operator: str, operand: Any, right_hand: Any) -> bool:
-        print(operator, operand, right_hand, sep=",")
+
         if operator == "eq":
             return operand == right_hand
         elif operator == "ne":

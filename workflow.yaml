@@ -142,7 +142,7 @@ nodes:
     type: base_agent
     description: "imind base agent example"
     system_prompt: "You are a helpful assistant"
-    debug: true
+    debug: false
     input:
       content:
         description: "input content of echo"
