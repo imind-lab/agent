@@ -20,7 +20,7 @@ class LoopAggregationNode(Node, NodeMixin):
 
         la_state = getattr(state, f"{self.id}_output") or {}
 
-        counter = la_state.get("counter", 0)
+        counter = la_state.get("counter", 1)
         agg_items = la_state.get("agg_items")
         if agg_items is None:
             agg_items = {}
