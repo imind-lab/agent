@@ -12,7 +12,7 @@ from pydantic import BaseModel
 
 from langchain_core.messages import AnyMessage, HumanMessage, SystemMessage
 from langgraph.graph import StateGraph, START, MessagesState, END
-from langgraph.graph.graph import CompiledGraph
+from langgraph.graph.state import CompiledStateGraph
 from langchain.chat_models.base import BaseChatModel, _ConfigurableModel
 from langchain_core.tools import BaseTool
 from langgraph.types import Checkpointer
@@ -38,7 +38,7 @@ def create_base_agent(
     checkpointer: Optional[Checkpointer] = None,
     store: Optional[BaseStore] = None,
     debug: bool = False,
-) -> CompiledGraph:
+) -> CompiledStateGraph:
     tools = tools or []
     summarization_model = llm
 
