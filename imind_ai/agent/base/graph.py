@@ -51,6 +51,7 @@ def create_base_agent(
     )
 
     async def pre_processor(state: State):
+        """前处理器：用于处理用户输入"""
         user_input = state["user_input"]
         if isinstance(user_input, tuple):
             media = user_input[1]
@@ -83,6 +84,7 @@ def create_base_agent(
         return {"messages": HumanMessage(content=content)}
 
     async def llm_caller(state: State):
+        """调用大模型"""
         summarized_messages = state["summarized_messages"]
         last_message = summarized_messages[-1]
         new_messages = deque()
@@ -118,6 +120,7 @@ def create_base_agent(
         return {"messages": [response], "summarized_messages": summarized_messages}
 
     async def post_processor(state: State):
+        """后处理：根据是否结构化输出设计最终输出"""
         if output_schema:
             print("output_schema", output_schema, output_schema.model_json_schema())
             response = llm.with_structured_output(output_schema).invoke(
