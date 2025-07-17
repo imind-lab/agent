@@ -12,10 +12,23 @@ from imind_ai.utils import create_dynamic_model
 
 
 def build_settings_from_schema(schema: Dict[str, Any]) -> Type[BaseSettings]:
+    """Dynamically creates a Settings class from a given schema configuration.
 
+    Args:
+        schema: Dictionary defining the configuration structure and validation rules
+
+    Returns:
+        Custom Settings class configured to load from multiple sources
+    """
+
+    # Create a dynamic Pydantic model based on the provided schema
     DynamicModel: Type[BaseModel] = create_dynamic_model(schema)
 
+    # Create custom Settings class combining BaseSettings and the dynamic model
     class Settings(BaseSettings, DynamicModel):
+        """Configuration settings with YAML file support and dynamic field definitions."""
+
+        # Configure settings loading behavior
         model_config = SettingsConfigDict(
             yaml_file="settings.yaml",
             yaml_file_encoding="utf-8",
@@ -31,6 +44,15 @@ def build_settings_from_schema(schema: Dict[str, Any]) -> Type[BaseSettings]:
             dotenv_settings: PydanticBaseSettingsSource,
             file_secret_settings: PydanticBaseSettingsSource,
         ) -> tuple[PydanticBaseSettingsSource, ...]:
+            """Customize the priority and sources for loading configuration values.
+
+            Determines the order of precedence for configuration sources:
+            1. Initialization arguments (highest priority)
+            2. Environment variables
+            3. YAML configuration file (lowest priority)
+
+            Note: Dotenv and file secret sources are excluded from this configuration.
+            """
             return init_settings, env_settings, YamlConfigSettingsSource(settings_cls)
 
     return Settings
