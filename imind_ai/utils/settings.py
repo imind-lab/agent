@@ -83,11 +83,28 @@ def aggregate_schemas(*args) -> Dict[str, Any]:
 def process_re_alias_schema(
     parent: Dict[str, Any], child: Dict[str, Any]
 ) -> Dict[str, Any]:
+    """Processes and merges schema definitions by handling field aliases and default values.
+
+    This function updates a child schema based on a parent schema by:
+    1. Propagating alias definitions from parent to child
+    2. Synchronizing default values between matching fields
+    3. Handling both direct field matches and alias-based matches
+
+    Args:
+        parent: Parent schema containing field definitions with potential aliases
+        child: Child schema to be updated with parent's aliases and defaults
+
+    Returns:
+        Updated child schema with merged alias configurations and default values
+    """
+    # Start with the child schema as base configuration
     schema = child
+
     for key, value in parent.items():
         alias = value.get("alias", None)
         if alias is not None:
             for k, v in schema.items():
+                # Convert BaseModel fields to dictionaries for uniform processing
                 if isinstance(v, BaseModel):
                     v = v.model_dump()
                 a = v.get("alias", None)
