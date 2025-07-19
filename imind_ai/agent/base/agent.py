@@ -123,6 +123,7 @@ class BaseAgent:
     async def pre_process(
         self, user_input: Input, ctx: BaseContext = None
     ) -> Tuple[Dict, Dict]:
+        """Pre Processor"""
         if self.agent is None:
             raise RuntimeError("The agent was not initialized correctly.")
 
@@ -163,6 +164,7 @@ class BaseAgent:
         return inputs, config
 
     async def clone(self):
+        """close the postgres pool"""
         try:
             if self.pg_pool:
                 await self.pg_pool.__aexit__(None, None, None)

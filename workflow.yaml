@@ -161,6 +161,7 @@ nodes:
       aigc:
         reference: base_agent_output.result
         agg_type: list
+
     next: if_route
     next_type: condition
   - id: if_route
