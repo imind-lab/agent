@@ -1,4 +1,4 @@
-from imind_ai.agent.workflow.graph.loop_aggregation import LoopAggregationNode
+from imind_ai.agent.workflow.graph.loop_aggregator import LoopAggregationNode
 from imind_ai.agent.workflow.pipeline.context import Context, Phase
 from imind_ai.agent.workflow.graph.condition import ConditionNode
 from imind_ai.agent.workflow.graph.base_agent import BaseAgentNode

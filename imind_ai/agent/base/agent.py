@@ -121,7 +121,7 @@ class BaseAgent:
                 yield message_chunk.content
 
     async def pre_process(
-        self, user_input: Input, ctx: BaseContext = None
+        self, user_input: str | Input, ctx: BaseContext = None
     ) -> Tuple[Dict, Dict]:
         """Pre Processor"""
         if self.agent is None:
