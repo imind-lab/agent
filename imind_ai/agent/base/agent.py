@@ -159,8 +159,10 @@ class BaseAgent:
         config = {"configurable": configurable}
 
         self.agent.store = ctx.store
-
-        inputs = {"user_input": self.prompt_template.format(**user_input.dict())}
+        if isinstance(user_input, Input):
+            inputs = {"user_input": self.prompt_template.format(**user_input.dict())}
+        else:
+            inputs = {"user_input": self.prompt_template.format(user_input=user_input)}
         return inputs, config
 
     async def clone(self):
