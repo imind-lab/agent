@@ -21,7 +21,7 @@ class EnvOption(BaseModel):
 
 
 class Config(BaseModel):
-    input: Dict[str, IOOption]
+    input: Union[str, Dict[str, IOOption]]
     output: Union[str, Dict[str, IOOption]]
     env: Optional[Dict[str, EnvOption]] = None
 
