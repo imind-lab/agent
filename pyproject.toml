@@ -11,6 +11,7 @@ dependencies = [
     "langchain-ollama>=0.3.3",
     "langgraph>=0.4.8",
     "langgraph-checkpoint-postgres>=2.0.22",
+    "langgraph-supervisor>=0.0.28",
     "langmem>=0.0.27",
     "pydantic>=2.11.7",
     "pydantic-settings>=2.9.1",
