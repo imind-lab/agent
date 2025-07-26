@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, model_serializer
 from imind_ai.agent.config.value_type import ValueType
 
 
+# Define a custom class 'IO' that inherits from Pydantic's BaseModel
 class IO(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     _data: Dict[str, Any] = PrivateAttr(default_factory=dict)
