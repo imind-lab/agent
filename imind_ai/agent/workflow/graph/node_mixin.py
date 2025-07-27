@@ -11,6 +11,7 @@ class NodeMixin:
         """
         infos = ref.split(".")
         entity = infos.pop(0)
+        entity = f"{entity}_input" if entity == "workflow" else f"{entity}_output"
         print(entity, state)
         if not hasattr(state, entity):
             raise ValueError(f"引用的值不正确，请核实{ref}, {str(state)}")
