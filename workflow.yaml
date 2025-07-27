@@ -26,7 +26,7 @@
 #       description: "content of result"
 #       type: list[str]
 #       source: reference
-#       reference: base_agent_11_output.temperature
+#       reference: base_agent_11.temperature
 # nodes:
 #   - id: if_route
 #     name: if_route
@@ -36,7 +36,7 @@
 #       logic_operator: and
 #       condition:
 #         - operator: em
-#           operand: workflow_input.query1
+#           operand: workflow.query1
 #           op_type: int
 #           source: input
 #           value: 20
@@ -45,7 +45,7 @@
 #       - logic_operator: or
 #         condition:
 #           - operator: em
-#             operand: workflow_input.query2
+#             operand: workflow.query2
 #             op_type: int
 #             source: input
 #             value: 20
@@ -67,7 +67,7 @@
 #         description: "input content of echo"
 #         type: str
 #         source: reference
-#         reference: workflow_input.query1
+#         reference: workflow.query1
 #     output: # 输出数据
 #       temperature:
 #         description: "The temperature in fahrenheit"
@@ -90,7 +90,7 @@
 #         description: "input content of echo"
 #         type: str
 #         source: reference
-#         reference: workflow_input.query2
+#         reference: workflow.query2
 #     output: # 输出数据
 #       result:
 #         description: "content of result"
@@ -107,7 +107,7 @@
 #         description: "input content of echo"
 #         type: str
 #         source: reference
-#         reference: workflow_input.query3
+#         reference: workflow.query3
 #     output: # 输出数据
 #       result:
 #         description: "content of result"
@@ -134,7 +134,7 @@ agent:
       description: "content of result"
       type: list[str]
       source: reference
-      reference: loop_agg_output.aggregation
+      reference: loop_agg.aggregation
 nodes:
   - id: base_agent
     prev: __start__
@@ -148,7 +148,7 @@ nodes:
         description: "input content of echo"
         type: str
         source: reference
-        reference: workflow_input.query
+        reference: workflow.query
     output: # 输出数据
       result:
         description: "content of result"
@@ -159,7 +159,7 @@ nodes:
     type: loop_aggregation
     aggregation:
       aigc:
-        reference: base_agent_output.result
+        reference: base_agent.result
         agg_type: list
     next: if_route
     next_type: condition
@@ -171,7 +171,7 @@ nodes:
       logic_operator: and
       condition:
         - operator: lt
-          operand: loop_agg_output.counter
+          operand: loop_agg.counter
           op_type: int
           source: input
           value: 3
